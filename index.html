@@ -1,34 +1,102 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مواقيت الصلاة</title>
+  <title>مواقيت الصلاة في الجزائر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #2e7d32;
+    }
+    select, ul {
+      margin-top: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      margin: 10px auto;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 300px;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
+
   <h1>مواقيت الصلاة في <span id="city-name">الجزائر العاصمة</span></h1>
+
+  <label for="city">اختر ولايتك:</label>
+  <select id="city" onchange="changeCity()">
+    <option value="Algiers">الجزائر العاصمة</option>
+    <option value="Medea">المدية</option>
+    <option value="Oran">وهران</option>
+    <option value="Constantine">قسنطينة</option>
+    <option value="Annaba">عنابة</option>
+    <option value="Setif">سطيف</option>
+    <option value="Batna">باتنة</option>
+    <option value="Bejaia">بجاية</option>
+    <option value="Tlemcen">تلمسان</option>
+    <option value="Tizi Ouzou">تيزي وزو</option>
+  </select>
+
   <ul id="prayer-times">
-    <li id="fajr">الفجر: </li>
-    <li id="dhuhr">الظهر: </li>
-    <li id="asr">العصر: </li>
-    <li id="maghrib">المغرب: </li>
-    <li id="isha">العشاء: </li>
+    <li id="fajr">الفجر: ...</li>
+    <li id="dhuhr">الظهر: ...</li>
+    <li id="asr">العصر: ...</li>
+    <li id="maghrib">المغرب: ...</li>
+    <li id="isha">العشاء: ...</li>
   </ul>
 
   <script>
-    const city = "Algiers"; // استبدل باسم المدينة المطلوبة
-    document.getElementById("city-name").textContent = city;
+    function addMinutes(timeStr, minutes) {
+      const [hour, minute] = timeStr.split(":").map(Number);
+      const date = new Date();
+      date.setHours(hour, minute + minutes);
+      return date.toTimeString().slice(0, 5);
+    }
 
-    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Algeria&method=8`)
-      .then(response => response.json())
-      .then(data => {
-        const timings = data.data.timings;
-        document.getElementById("fajr").textContent += timings.Fajr;
-        document.getElementById("dhuhr").textContent += timings.Dhuhr;
-        document.getElementById("asr").textContent += timings.Asr;
-        document.getElementById("maghrib").textContent += timings.Maghrib;
-        document.getElementById("isha").textContent += timings.Isha;
-      })
-      .catch(error => console.error("حدث خطأ:", error));
+    function fetchPrayerTimes(city) {
+      document.getElementById("city-name").textContent = city;
+
+      fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Algeria&method=8`)
+        .then(response => response.json())
+        .then(data => {
+          const timings = data.data.timings;
+          document.getElementById("fajr").textContent = "الفجر: " + timings.Fajr;
+          document.getElementById("dhuhr").textContent = "الظهر: " + timings.Dhuhr;
+          document.getElementById("asr").textContent = "العصر: " + timings.Asr;
+          document.getElementById("maghrib").textContent = "المغرب: " + timings.Maghrib;
+
+          // تعديل توقيت العشاء يدويًا (مثلاً -20 دقيقة لتصحيحه حسب موقع timesprayer)
+          const adjustedIsha = addMinutes(timings.Isha, -20); 
+          document.getElementById("isha").textContent = "العشاء: " + adjustedIsha;
+        })
+        .catch(err => {
+          console.error("فشل في جلب المواقيت:", err);
+          alert("حدث خطأ في تحميل مواقيت الصلاة. تأكد من اتصال الإنترنت.");
+        });
+    }
+
+    function changeCity() {
+      const selectedCity = document.getElementById("city").value;
+      fetchPrayerTimes(selectedCity);
+    }
+
+    // تحميل مواقيت الجزائر العاصمة افتراضياً عند فتح الصفحة
+    window.onload = () => fetchPrayerTimes("Algiers");
   </script>
+
 </body>
 </html>
