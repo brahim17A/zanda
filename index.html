@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -29,12 +30,13 @@
     <section class="section-card bg-white rounded-2xl shadow p-6">
       <label for="city" class="block text-xl font-semibold mb-3 text-green-700">اختر ولايتك:</label>
       <select id="city" class="w-full p-3 border border-green-300 rounded-lg text-lg" onchange="changeCity()">
+        <!-- خيارات الولايات -->
         <option value="Algiers">الجزائر العاصمة</option>
         <option value="Oran">وهران</option>
         <option value="Constantine">قسنطينة</option>
         <option value="Annaba">عنابة</option>
         <option value="Setif">سطيف</option>
-        <option value="Medea">المدية</option>
+        <!-- يمكنك إضافة باقي الولايات هنا -->
       </select>
     </section>
 
@@ -69,45 +71,8 @@
   </footer>
 
   <!-- جافاسكريبت -->
-  <script>
-    function updateTime() {
-      const now = new Date();
-      document.getElementById("current-time").textContent = now.toLocaleTimeString('ar-DZ');
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    function changeCity() {
-      const city = document.getElementById("city").value;
-      fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Algeria&method=8`)
-        .then(response => response.json())
-        .then(data => {
-          const timings = data.data.timings;
-          document.getElementById("fajr").textContent = "الفجر: " + timings.Fajr;
-          document.getElementById("dhuhr").textContent = "الظهر: " + timings.Dhuhr;
-          document.getElementById("asr").textContent = "العصر: " + timings.Asr;
-          document.getElementById("maghrib").textContent = "المغرب: " + timings.Maghrib;
-          document.getElementById("isha").textContent = "العشاء: " + timings.Isha;
-        })
-        .catch(error => console.error("خطأ في جلب المواقيت:", error));
-    }
-
-    // تحميل المواقيت عند فتح الصفحة لأول مرة
-    window.onload = changeCity;
-
-    // أذكار (مثال بسيط)
-    function toggleAzkar(type) {
-      const azkarSection = document.getElementById("azkar-section");
-      azkarSection.classList.remove("hidden");
-      if (type === 'morning') {
-        azkarSection.innerHTML = "<p>أذكار الصباح: سبحان الله، الحمد لله، لا إله إلا الله، الله أكبر.</p>";
-      } else if (type === 'evening') {
-        azkarSection.innerHTML = "<p>أذكار المساء: أستغفر الله، اللهم صل على محمد، لا حول ولا قوة إلا بالله.</p>";
-      } else if (type === 'night') {
-        azkarSection.innerHTML = "<p>أذكار الليل: اللهم بك أمسينا وبك نحيا، اللهم اغفر لنا.</p>";
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
 
